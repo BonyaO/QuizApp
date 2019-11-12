@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Quiz App</string>
+    <string name="heading">Computer Science Quiz</string>
+    <string name="toast_message">Please select an answer</string>
+    <string name="percentage_completed_0">Percentage Completed: 0%</string>
+    <string name="score">Score</string>
+</resources>
