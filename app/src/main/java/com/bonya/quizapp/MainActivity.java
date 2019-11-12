@@ -7,12 +7,9 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.Icon;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -21,9 +18,18 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String KEY_SCORE = "KeyScore";
+    private static final String KEY_ANSWERED = "KeyAnswered";
+    private static final String KEY_QUESTION_COUNT = "keyQuestionCount";
+    private static final String KEY_QUESTIONS = "keyQuestions";
+    private static final String KEY_PROGRESS_LEVEL = "keyProgress";
+
+
+
+
     TextView questionTextView;
     TextView questionNumberTextView;
     RadioGroup mRadioGroup;
@@ -37,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     ProgressBar questionCompletionProgressBar;
 
 
-    List<Question> mQuestions;
+    ArrayList<Question> mQuestions;
 
     private ColorStateList defaultRadioButtonColor;
 
@@ -67,63 +73,88 @@ public class MainActivity extends AppCompatActivity {
 
         defaultRadioButtonColor = optionFourRadioButton.getTextColors();
 
-        //Populating mQuestions List with 10 questions
-        mQuestions = new ArrayList<>();
-        mQuestions.add(new Question("What is the full meaning of BCD?",
-                "Binary Coded Drinks",
-                "Binary Coded Decimal",
-                "Binomial Coded Decimal",
-                "Basic Computer Data", 2));
-        mQuestions.add(new Question("All of the following are input devices except:",
-                "Memory Card",
-                "Microphone",
-                "Keyboard",
-                "Mouse", 1));
-        mQuestions.add(new Question("1MB is equal to ",
-                "1024 Bytes",
-                "1000KB",
-                "1024KB",
-                "100KB", 3));
-        mQuestions.add(new Question("Who was the first programmer?",
-                "Charles Barbage",
-                "Steve Jobs",
-                "Ada Augusta",
-                "Bill Gates", 3));
-        mQuestions.add(new Question("To access the services of Operating System, the interface is provided by _______",
-                "System Calls",
-                "API",
-                "Library",
-                "Assembly instructions", 1));
-        mQuestions.add(new Question("Which of the following error will be handled by the Operating System?",
-                "Power failure",
-                "Lack of paper in printer",
-                "Connection failure in the network",
-                "All of the above", 4));
-        mQuestions.add(new Question("The process of carrying out a command is called",
-                "Fetching",
-                "Controlling",
-                "Storing",
-                "Executing", 4));
-        mQuestions.add(new Question("A Database is used to:",
-                "Store and organize data in records",
-                "Store and organize papers",
-                "Store and organize records in files",
-                "Store and organize records in fields", 1));
-        mQuestions.add(new Question("The term Icon refers to",
-                "A picture or symbol that represents a command",
-                "A Photograph",
-                "A Leader",
-                "A symbol of Power", 1));
-        mQuestions.add(new Question("What does the \"R\" in RAM stand for?",
-                "Rewrite",
-                "Read",
-                "Readable",
-                "Random", 4));
+
+        if(savedInstanceState == null){
+            //Populating mQuestions List with 10 questions
+            mQuestions = new ArrayList<>();
+            mQuestions.add(new Question("What is the full meaning of BCD?",
+                    "Binary Coded Drinks",
+                    "Binary Coded Decimal",
+                    "Binomial Coded Decimal",
+                    "Basic Computer Data", 2));
+            mQuestions.add(new Question("All of the following are input devices except:",
+                    "Memory Card",
+                    "Microphone",
+                    "Keyboard",
+                    "Mouse", 1));
+            mQuestions.add(new Question("1MB is equal to ",
+                    "1024 Bytes",
+                    "1000KB",
+                    "1024KB",
+                    "100KB", 3));
+            mQuestions.add(new Question("Who was the first programmer?",
+                    "Charles Babbage",
+                    "Steve Jobs",
+                    "Ada Augusta",
+                    "Bill Gates", 3));
+            mQuestions.add(new Question("To access the services of Operating System, the interface is provided by _______",
+                    "System Calls",
+                    "API",
+                    "Library",
+                    "Assembly instructions", 1));
+            mQuestions.add(new Question("Which of the following error will be handled by the Operating System?",
+                    "Power failure",
+                    "Lack of paper in printer",
+                    "Connection failure in the network",
+                    "All of the above", 4));
+            mQuestions.add(new Question("The process of carrying out a command is called",
+                    "Fetching",
+                    "Controlling",
+                    "Storing",
+                    "Executing", 4));
+            mQuestions.add(new Question("A Database is used to:",
+                    "Store and organize data in records",
+                    "Store and organize papers",
+                    "Store and organize records in files",
+                    "Store and organize records in fields", 1));
+            mQuestions.add(new Question("The term Icon refers to",
+                    "A picture or symbol that represents a command",
+                    "A Photograph",
+                    "A Leader",
+                    "A symbol of Power", 1));
+            mQuestions.add(new Question("What does the \"R\" in RAM stand for?",
+                    "Rewrite",
+                    "Read",
+                    "Readable",
+                    "Random", 4));
+
+            totalQuestions = mQuestions.size();
+            Collections.shuffle(mQuestions);
+            showNextQuestion();
+        }
+        else{
+            mQuestions = savedInstanceState.getParcelableArrayList(KEY_QUESTIONS);
+            totalQuestions = mQuestions.size();
+            questionCounter = savedInstanceState.getInt(KEY_QUESTION_COUNT);
+            mCurrentQuestion = mQuestions.get(questionCounter - 1);
+            score = savedInstanceState.getInt(KEY_SCORE);
+            answered = savedInstanceState.getBoolean(KEY_ANSWERED);
+            questionCompletionProgressBar.setProgress(savedInstanceState.getInt(KEY_PROGRESS_LEVEL));
+
+            scoreTextView.setText("Score: " + score);
+            totalQuestionTextView.setText("Percentage Completed: " + (questionCounter-1)*10 + "%");
+            questionNumberTextView.setText("Q" + questionCounter + ")" );
+            bindQuestionToButtonGroup();
+
+            if(answered){
+                showAnswer();
+                totalQuestionTextView.setText("Percentage Completed: " + questionCounter*10 + "%");
+            }
+        }
 
 
-        totalQuestions = mQuestions.size();
-        Collections.shuffle(mQuestions);
-        showNextQuestion();
+
+
 
     }
 
@@ -167,12 +198,7 @@ public class MainActivity extends AppCompatActivity {
 
         if(questionCounter < totalQuestions){
             mCurrentQuestion = mQuestions.get(questionCounter);
-
-            questionTextView.setText(mCurrentQuestion.getQuestion());
-            optionOneRadioButton.setText(mCurrentQuestion.getOption1());
-            optionTwoRadioButton.setText(mCurrentQuestion.getOption2());
-            optionThreeRadioButton.setText(mCurrentQuestion.getOption3());
-            optionFourRadioButton.setText(mCurrentQuestion.getOption4());
+            bindQuestionToButtonGroup();
 
             questionCounter++;
             answered = false;
@@ -184,9 +210,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-/*
-//Verifies if the checked RadioButton corresponds to the correct answer
- */
+    private void bindQuestionToButtonGroup() {
+        questionTextView.setText(mCurrentQuestion.getQuestion());
+        optionOneRadioButton.setText(mCurrentQuestion.getOption1());
+        optionTwoRadioButton.setText(mCurrentQuestion.getOption2());
+        optionThreeRadioButton.setText(mCurrentQuestion.getOption3());
+        optionFourRadioButton.setText(mCurrentQuestion.getOption4());
+    }
+
+    /*
+    //Verifies if the checked RadioButton corresponds to the correct answer
+     */
     private void checkAnswer() {
         answered = true;
         RadioButton selectedButton = findViewById(mRadioGroup.getCheckedRadioButtonId());
@@ -195,6 +229,10 @@ public class MainActivity extends AppCompatActivity {
         if(answerNumber == mCurrentQuestion.getAnswerNumber()){
             score++;
             scoreTextView.setText("Score: " + score);
+            Toast.makeText(this, "Hurray, your are correct", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            Toast.makeText(this, "Opps!!, you checked the wrong  answer", Toast.LENGTH_SHORT).show();
         }
         showAnswer();
     }
@@ -274,4 +312,20 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
+    /**
+     * This method ensures that data is preserved when the screen is rotated
+     * The data is stored as key-value pairs in the outState Bundle and is retrieved in the
+     * onCreate() method from the savedInstanceState Bundle
+     * @param outState
+     */
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt(KEY_SCORE, score);
+        outState.putInt(KEY_QUESTION_COUNT, questionCounter);
+        outState.putInt(KEY_PROGRESS_LEVEL, questionCompletionProgressBar.getProgress());
+        outState.putBoolean(KEY_ANSWERED, answered);
+        outState.putParcelableArrayList(KEY_QUESTIONS, mQuestions);
+    }
 }

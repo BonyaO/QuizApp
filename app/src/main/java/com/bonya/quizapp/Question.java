@@ -1,14 +1,18 @@
 package com.bonya.quizapp;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * This is a model class for the questions, each question has four options with one of the them
  * the correct answer
  * The last member variable (field) is the number corresponding to the correct answer
  * the answer number for option 1 is 1, option 2 is 2, and so on
+ * The class implements Parcelable to enable its references to be passed between activities and so on
  */
 
-public class Question {
+public class Question implements Parcelable {
     private String question;
     private String option1;
     private String option2;
@@ -28,6 +32,27 @@ public class Question {
         this.option4 = option4;
         this.answerNumber = answerNumber;
     }
+
+    protected Question(Parcel in) {
+        question = in.readString();
+        option1 = in.readString();
+        option2 = in.readString();
+        option3 = in.readString();
+        option4 = in.readString();
+        answerNumber = in.readInt();
+    }
+
+    public static final Creator<Question> CREATOR = new Creator<Question>() {
+        @Override
+        public Question createFromParcel(Parcel in) {
+            return new Question(in);
+        }
+
+        @Override
+        public Question[] newArray(int size) {
+            return new Question[size];
+        }
+    };
 
     public String getQuestion() {
         return question;
@@ -78,6 +103,18 @@ public class Question {
     }
 
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
-
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(question);
+        parcel.writeString(option1);
+        parcel.writeString(option2);
+        parcel.writeString(option3);
+        parcel.writeString(option4);
+        parcel.writeInt(answerNumber);
+    }
 }
