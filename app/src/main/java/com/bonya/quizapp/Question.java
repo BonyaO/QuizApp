@@ -18,13 +18,45 @@ public class Question implements Parcelable {
     private String option2;
     private String option3;
     private String option4;
+    private Category mCategory;
+
+    public Category getCategory() {
+        return mCategory;
+    }
+
+    public void setCategory(Category category) {
+        mCategory = category;
+    }
+
     private int answerNumber;
 
+    public enum Category{
+        SINGLE_ANSWER,
+        MULTIPLE_ANSWER,
+        FREEFORM
+    }
+
+    public Question(Category category, String question, String option1){
+        this.mCategory = category;
+        this.question = question;
+        this.option1 = option1;
+
+    }
+
+    public Question(Category category, String question, String option1, String option2, String option3, String option4) {
+        this.mCategory = category;
+        this.question = question;
+        this.option1 = option1;
+        this.option2 = option2;
+        this.option3 = option3;
+        this.option4 = option4;
+    }
 
     public Question() {
     }
 
-    public Question(String question, String option1, String option2, String option3, String option4, int answerNumber) {
+    public Question(Category category, String question, String option1, String option2, String option3, String option4, int answerNumber) {
+        this.mCategory = category;
         this.question = question;
         this.option1 = option1;
         this.option2 = option2;
@@ -110,6 +142,7 @@ public class Question implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(String.valueOf(mCategory));
         parcel.writeString(question);
         parcel.writeString(option1);
         parcel.writeString(option2);

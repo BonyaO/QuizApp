@@ -4,4 +4,6 @@
     <string name="toast_message">Please select an answer</string>
     <string name="percentage_completed_0">Percentage Completed: 0%</string>
     <string name="score">Score</string>
+    <string name="enter_your_answer">Enter your answer</string>
+    <string name="toast_message_two">Please Type in your answer</string>
 </resources>

@@ -104,9 +104,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/confirmButton"
         app:layout_constraintTop_toBottomOf="@+id/question_tv">
 
         <RadioButton
@@ -134,17 +136,74 @@
             android:text="Option 1" />
     </RadioGroup>
 
+    <EditText
+        android:id="@+id/answer_textview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:hint="@string/enter_your_answer"
+        android:inputType="textMultiLine"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/confirmButton"
+        app:layout_constraintTop_toBottomOf="@id/question_tv" />
+
+    <LinearLayout
+        android:id="@+id/checkbox_holder"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="start"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/confirmButton"
+        app:layout_constraintTop_toBottomOf="@+id/question_tv">
+
+        <CheckBox
+            android:id="@+id/option1_cb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Option One" />
+
+        <CheckBox
+            android:id="@+id/option2_cb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Option Two" />
+
+        <CheckBox
+            android:id="@+id/option3_cb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Option Three" />
+
+        <CheckBox
+            android:id="@+id/option4_cb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Option Four" />
+    </LinearLayout>
+
 
     <Button
         android:id="@+id/confirmButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
+        android:layout_marginBottom="8dp"
         android:onClick="confirmAnswer"
         android:text="Next"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radio_group" />
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
