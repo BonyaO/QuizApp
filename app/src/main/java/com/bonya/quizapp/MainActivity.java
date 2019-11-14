@@ -25,11 +25,7 @@ import java.util.List;
 
 import static com.bonya.quizapp.Question.*;
 public class MainActivity extends AppCompatActivity {
-    private static final String KEY_SCORE = "KeyScore";
-    private static final String KEY_ANSWERED = "KeyAnswered";
-    private static final String KEY_QUESTION_COUNT = "keyQuestionCount";
-    private static final String KEY_QUESTIONS = "keyQuestions";
-    private static final String KEY_PROGRESS_LEVEL = "keyProgress";
+
     TextView questionTextView;
     TextView questionNumberTextView;
     RadioGroup mRadioGroup;
@@ -90,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         questionTwoAnswers.add("Executing");
         questionThreeAnswers.add("Ensure Data integrity");
         questionThreeAnswers.add("Store and organize data");
-        if(savedInstanceState == null){
+
             //Populating mQuestions List with 10 questions
             mQuestions.add(new Question(Category.SINGLE_ANSWER,"What is the full meaning of BCD?",
                     "Binary Coded Drinks",
@@ -102,12 +98,12 @@ public class MainActivity extends AppCompatActivity {
                     "Microphone",
                     "Keyboard",
                     "Mouse", 1));
-            mQuestions.add(new Question(Category.SINGLE_ANSWER, "1MB is equal to ",
+            mQuestions.add(new Question(Category.SINGLE_ANSWER, "1MB is equal to: ",
                     "1024 Bytes",
                     "1000KB",
                     "1024KB",
                     "100KB", 3));
-            mQuestions.add(new Question(Category.SINGLE_ANSWER, "Who was the first programmer?",
+            mQuestions.add(new Question(Category.SINGLE_ANSWER, "Pick the first programmer",
                     "Charles Babbage",
                     "Steve Jobs",
                     "Ada Augusta",
@@ -132,42 +128,13 @@ public class MainActivity extends AppCompatActivity {
                     "Count all the people on earth",
                     "Ensure Data integrity",
                     "Play Music"));
-            mQuestions.add(new Question(Category.FREEFORM,"What is the full meaning of D.O.S","Denial Of Service"));
+            mQuestions.add(new Question(Category.FREEFORM,"What is the full meaning of D.O.S. in terms of network security? ","Denial Of Service"));
             mQuestions.add(new Question(Category.FREEFORM, "What does the \"R\" in RAM stand for?","Random"));
             totalQuestions = mQuestions.size();
             Collections.shuffle(mQuestions);
             showNextQuestion();
-        }
-        else{
-            mQuestions = savedInstanceState.getParcelableArrayList(KEY_QUESTIONS);
-            totalQuestions = mQuestions.size();
-            questionCounter = savedInstanceState.getInt(KEY_QUESTION_COUNT);
-            mCurrentQuestion = mQuestions.get(questionCounter - 1);
-            score = savedInstanceState.getInt(KEY_SCORE);
-            answered = savedInstanceState.getBoolean(KEY_ANSWERED);
-            questionCompletionProgressBar.setProgress(savedInstanceState.getInt(KEY_PROGRESS_LEVEL));
-            scoreTextView.setText("Score: " + score);
-            totalQuestionTextView.setText("Percentage Completed: " + (questionCounter-1)*10 + "%");
-            questionNumberTextView.setText("Q" + questionCounter + ")" );
-            bindTextToViews();
-            if(answered){
-                questionTextView.setText(mCurrentQuestion.getQuestion());
-                switch (mCurrentQuestion.getCategory()){
-                    case SINGLE_ANSWER:
-                        showAnswer();
-                        break;
-                    case MULTIPLE_ANSWER:
-                        checkAnswerForCheckBoxes();
-                        break;
-                    case FREEFORM:
-                        showAnswerForEditTex();
-                        break;
-                }
-
-                totalQuestionTextView.setText("Percentage Completed: " + questionCounter*10 + "%");
-            }
-        }
     }
+
     /**
      * Verifies if any of the RadioButtons are checked and carries out the appropriate action
      * @param view the confirm answer button
@@ -181,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
                     checkAnswerForRadioButtons();
                     break;
                 case MULTIPLE_ANSWER:
-                    bindTextToViews();
+                    checkAnswerForCheckBoxes();
                     break;
                 case FREEFORM:
                     checkAnswerForEditText();
@@ -192,10 +159,8 @@ public class MainActivity extends AppCompatActivity {
             showNextQuestion();
         }
     }
-    /**
-     * showNextQuestion simple replaces the text in the various views with the information of the subsequent Question
-     * and resets the colour of the checkboxes
-     */
+
+    //showNextQuestion simply replaces the text in the various views with the information of the subsequent Questions
     private void showNextQuestion() {
         scoreTextView.setText("Score: " + score);
         int i = questionCounter + 1;
@@ -211,13 +176,12 @@ public class MainActivity extends AppCompatActivity {
         else{
             //Display Final result in A toast
             String alert_message = "You have completed the quiz, You Scored: " + score * 10 + "%";
-            Toast.makeText(this, alert_message, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, alert_message, Toast.LENGTH_LONG).show();
             showResultsDialogue();
         }
     }
 
-    private void bindTextToViews() {
-        questionTextView.setText(mCurrentQuestion.getQuestion());
+    private void bindTextToViews() {//Hides or reveals views as required and provides text to the views
         switch (mCurrentQuestion.getCategory()){
             case SINGLE_ANSWER:
                 answerEditText.setVisibility(View.GONE);
@@ -233,6 +197,7 @@ public class MainActivity extends AppCompatActivity {
             case MULTIPLE_ANSWER:
                 mRadioGroup.setVisibility(View.GONE);
                 answerEditText.setVisibility(View.GONE);
+                Toast.makeText(this, "Select All correct answers", Toast.LENGTH_SHORT).show();
                 optionOneCB.setTextColor(defaultRadioButtonColor);
                 optionTwoCB.setTextColor(defaultRadioButtonColor);
                 optionThreeCB.setTextColor(defaultRadioButtonColor);
@@ -315,6 +280,9 @@ public class MainActivity extends AppCompatActivity {
         if(iScore == list.size()){
             updateScore();
             iScore = 0;
+            Toast.makeText(this, "Awesome!!", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(this, "Sorry, Better luck for next question", Toast.LENGTH_SHORT).show();
         }
         questionCompletionProgressBar.incrementProgressBy(10);
         setConfirmButtonTextToNextOrFinish();
@@ -327,7 +295,9 @@ public class MainActivity extends AppCompatActivity {
         }else{
             if (answerEditText.getText().toString().equalsIgnoreCase(mCurrentQuestion.getOption1())){
                 updateScore();
+                answerEditText.setTextColor(Color.GREEN);
             }else {
+                answerEditText.setTextColor(Color.RED);
                 Toast.makeText(this, "Opps!!, The Correct answer is: " + mCurrentQuestion.getOption1(), Toast.LENGTH_SHORT).show();
             }
             showAnswerForEditTex();
@@ -337,7 +307,6 @@ public class MainActivity extends AppCompatActivity {
         questionCompletionProgressBar.incrementProgressBy(10);
         totalQuestionTextView.setText("Percentage Completed: " + questionCounter*10 + "%");
         answerEditText.setText(mCurrentQuestion.getOption1());
-        answerEditText.setTextColor(Color.GREEN);
         setConfirmButtonTextToNextOrFinish();
     }
 
@@ -353,7 +322,7 @@ public class MainActivity extends AppCompatActivity {
             //Update the Score if he answer is correct
             if(answerNumber == mCurrentQuestion.getAnswerNumber()){
                 updateScore();
-                Toast.makeText(this, "Hurray, your are correct", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Hurray!! your are correct", Toast.LENGTH_SHORT).show();
             }
             else{
                 Toast.makeText(this, "Opps!!, you checked the wrong  answer", Toast.LENGTH_SHORT).show();
@@ -410,8 +379,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * This method presents an AlertDialog to the user containing the user's total score
-     * and an option to either close the app or restart the quiz
+     * This method presents an AlertDialog to the user containing the user's total score and an option to either close the app or restart the quiz
      */
     private void showResultsDialogue() {
         String alert_message = "You have completed the quiz, You Scored: " + score * 10 + "%";
@@ -436,27 +404,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialogInterface, int i) {
                 finish();
             }
-        });
-        //This disables the ability of the user to cancel the dialog by clicking out of the bounds
-        //or pressing the back button
+        });//This disables the ability of the user to cancel the dialog by clicking out of the bounds or pressing the back button
         Dialog dialog = alertDialog.create();
         dialog.setCanceledOnTouchOutside(false);
         alertDialog.show();
-    }
-
-    /**
-     * This method ensures that data is preserved when the screen is rotated
-     * The data is stored as key-value pairs in the outState Bundle and is retrieved in the
-     * onCreate() method from the savedInstanceState Bundle
-     * @param outState
-     */
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(KEY_SCORE, score);
-        outState.putInt(KEY_QUESTION_COUNT, questionCounter);
-        outState.putInt(KEY_PROGRESS_LEVEL, questionCompletionProgressBar.getProgress());
-        outState.putBoolean(KEY_ANSWERED, answered);
-        outState.putParcelableArrayList(KEY_QUESTIONS, mQuestions);
     }
 }
